@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pokedex-deploy
+  namespace: pokedex-ns
+  labels:
+    app: pokedex-deploy
+spec:
+  selector:
+    matchLabels:
+      app: pokedex-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: "pokedex-app"
+    spec:
+      containers:
+        
+        - name: nginx-container
+          image: "nginx:1.27.2"
+          env:
+          - name: API_HOST
+            value: "back-pokedex-service.pokedex-ns.svc.cluster.local"
+          - name: API_PORT
+            value: "8080"
+          volumeMounts:
+            - name: poke-nginx-config
+              mountPath: "/etc/nginx/conf.d/"
+            - name: dist-folder
+              mountPath: "/etc/nginx/www"
+          command:
+            [
+              "/bin/bash",
+              "-c",
+              "envsubst < /etc/nginx/conf.d/custom-nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'",
+            ]
+      volumes:
+        - name: poke-nginx-config
+          configMap:
+            name: poke-nginx-config
+        - name: dist-folder
+          hostPath:
+            path: /home/user/Pokedex/dist
+            type: Directory

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-pokedex-deploy
+  namespace: pokedex-ns
+  labels:
+    app: redis-pokedex-deploy
+spec:
+  selector:
+    matchLabels:
+      app: redis-pokedex-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: "redis-pokedex-app"
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.4.1-alpine3.20

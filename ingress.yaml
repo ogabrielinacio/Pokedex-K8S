@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: poke-ingress-host
+  namespace: pokedex-ns
+  annotations:
+    kubernetes.io/ingress.ingressClassName: "nginx"
+    cert-manager.io/cluster-issuer: "cert-cluster-issuer-pokedex"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "pokedex.ogabrielinacio.com"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: pokedex-service
+                port:
+                  number: 80
+  tls:
+    - hosts:
+      - "pokedex.ogabrielinacio.com"
+      secretName: poke-tls-cert 

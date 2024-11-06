@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back-pokedex-deploy
+  namespace: pokedex-ns
+  labels:
+    app: back-pokedex-deploy
+spec:
+  selector:
+    matchLabels:
+      app: back-pokedex-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: "back-pokedex-app"
+    spec:
+      containers:
+        - name: pokedex-backend
+          image: ogabrielinacio/pokedex-backend:1.0
+          env:
+          - name: REDIS_HOST
+            value: "redis-service.pokedex-ns.svc.cluster.local:6379"
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Production"
+     
